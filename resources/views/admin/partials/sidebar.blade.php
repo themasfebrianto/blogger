@@ -6,8 +6,9 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-pen-nib"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Admin Blog</div>
+        <div class="sidebar-brand-text mx-3">{{ config('app.name', 'Themas.Log') }}</div>
     </a>
+
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0">

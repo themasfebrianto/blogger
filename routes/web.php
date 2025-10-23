@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\CommentController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\UploadController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -45,6 +45,7 @@ Route::prefix('admin')
         Route::resource('categories', CategoryController::class)->except(['show']);
         Route::resource('tags', TagController::class)->except(['show']);
         Route::resource('comments', CommentController::class)->only(['index', 'destroy']);
+        Route::post('/upload-image', [UploadController::class, 'store'])->name('upload-image');
     });
 
 require __DIR__ . '/auth.php';
