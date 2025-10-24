@@ -63,6 +63,8 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
+            'description' => 'nullable|string',
         ]);
 
         $category->update($data);

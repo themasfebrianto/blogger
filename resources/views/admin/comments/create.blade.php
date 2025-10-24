@@ -3,8 +3,8 @@
 @section('content')
     <div class="card shadow mb-4">
         <div class="card-body">
-            <form action="{{ route('admin.posts.store') }}" method="POST">
-                @include('admin.posts._form', ['submit' => 'Create'])
+            <form action="{{ route('admin.tags.store') }}" method="POST">
+                @include('admin.tags._form', ['submit' => 'Create'])
             </form>
         </div>
     </div>

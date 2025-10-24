@@ -3,9 +3,9 @@
 @section('content')
     <div class="card shadow mb-4">
         <div class="card-body">
-            <form action="{{ route('admin.posts.update', $post->id) }}" method="POST">
+            <form action="{{ route('admin.tags.update', $tag->id) }}" method="POST">
                 @method('PUT')
-                @include('admin.posts._form', ['submit' => 'Update'])
+                @include('admin.tags._form', ['submit' => 'Update'])
             </form>
         </div>
     </div>
