@@ -33,7 +33,7 @@ class PostController extends Controller
 
         $filters = FilterBuilder::make()
             ->selectFromModel('category_id', 'All Categories', $categories)
-            ->selectFromModel('status', 'Status', $statuses)
+            ->selectFromModel('status', 'All Status', $statuses)
             ->get();
 
 

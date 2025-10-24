@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Yajra\DataTables\Facades\DataTables;
+use App\Helpers\DatatableFilters;
+use App\Helpers\FilterBuilder;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -15,31 +17,41 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Category::all();
-
-            return DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $editUrl = route('admin.posts.edit', $row->id);
-                    $deleteUrl = route('admin.posts.destroy', $row->id);
-                    return datatable_actions($editUrl, $deleteUrl);
-                })
-                ->addColumn('created_at', function ($row) {
-                    return $row->created_at->format('d M Y H:i');
-                })
-                ->filter(function ($query) use ($request) {
-                    $search = $request->input('search.value');
-                    if (!empty($search)) {
-                        $query->where('name', 'like', "%{$search}%");
-                    }
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            return $this->getDatatableData($request);
         }
 
-        $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+        $filters = [
+            'name' => null,
+        ];
+
+        return view('admin.categories.index', compact('filters'));
     }
+
+    protected function getDatatableData(Request $request)
+    {
+        $query = Category::query();
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('name', fn($row) => $row->name)
+            ->addColumn('slug', fn($row) => $row->slug)
+            ->addColumn('description', fn($row) => $row->description)
+            ->addColumn('created_at', fn($row) => $row->created_at->format('d M Y H:i'))
+            ->addColumn('action', function ($row) {
+                return datatable_actions(
+                    route('admin.categories.edit', $row->id),
+                    route('admin.categories.destroy', $row->id)
+                );
+            })
+            ->filter(function ($query) use ($request) {
+                DatatableFilters::applyFilters($query, $request, [
+                    'name',
+                ]);
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
 
     /**
      * Show the form for creating a new resource.

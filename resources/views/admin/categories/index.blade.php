@@ -5,16 +5,14 @@
 @endsection
 
 @section('content')
-    <!-- Flash Messages -->
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <!-- Categories Table -->
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table id="category-table" class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -34,10 +32,10 @@
 @push('scripts')
     <script>
         $(function() {
-            $('#posts-table').DataTable({
+            $('#category-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('admin.posts.index') }}',
+                ajax: '{{ route('admin.categories.index') }}',
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -68,7 +66,7 @@
                     },
                 ],
                 order: [
-                    [5, 'desc']
+                    [4, 'desc']
                 ],
             });
         });
