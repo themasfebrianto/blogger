@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -11,9 +12,32 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::latest()->paginate(10);
+        if ($request->ajax()) {
+            $query = Category::all();
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $editUrl = route('admin.posts.edit', $row->id);
+                    $deleteUrl = route('admin.posts.destroy', $row->id);
+                    return datatable_actions($editUrl, $deleteUrl);
+                })
+                ->addColumn('created_at', function ($row) {
+                    return $row->created_at->format('d M Y H:i');
+                })
+                ->filter(function ($query) use ($request) {
+                    $search = $request->input('search.value');
+                    if (!empty($search)) {
+                        $query->where('name', 'like', "%{$search}%");
+                    }
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        $categories = Category::all();
         return view('admin.categories.index', compact('categories'));
     }
 

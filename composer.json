@@ -32,7 +32,9 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/Helpers.php"
+            "app/Helpers/DatatableActions.php",
+            "app/Helpers/DatatableFilters.php",
+            "app/Helpers/FilterBuilder.php"
         ]
     },
     "autoload-dev": {

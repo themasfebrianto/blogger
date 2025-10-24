@@ -13,6 +13,8 @@
     <!-- Posts Table -->
     <div class="card shadow mb-4">
         <div class="card-body">
+            <!-- Filters -->
+            @include('admin.shared.datatableFilters', ['filters' => $filters, 'tableId' => 'posts-table'])
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0" id="posts-table">
                     <thead>
@@ -36,10 +38,17 @@
 @push('scripts')
     <script>
         $(function() {
-            $('#posts-table').DataTable({
+            // Initialize the DataTable
+            const table = $('#posts-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('admin.posts.index') }}',
+                ajax: {
+                    url: '{{ route('admin.posts.index') }}',
+                    data: function(d) {
+                        d.category = $('#filter-category').val();
+                        d.status = $('#filter-status').val();
+                    }
+                },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -78,8 +87,13 @@
                     },
                 ],
                 order: [
-                    [5, 'desc']
-                ],
+                    [6, 'desc']
+                ], // use index 6 (created_at)
+            });
+
+            // Listen to dropdown filter changes
+            $('#filter-category, #filter-status').on('change', function() {
+                table.ajax.reload();
             });
         });
     </script>

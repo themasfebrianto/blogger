@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Helpers\DatatableFilters;
+use App\Helpers\FilterBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -19,41 +21,50 @@ class PostController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Post::with(['user', 'category'])->latest();
-
-            return DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('author', fn($row) => $row->user?->name ?? '-')
-                ->addColumn('category', fn($row) => $row->category?->name ?? '-')
-                ->addColumn('tags', function ($row) {
-                    return $row->tags->pluck('name')->join(', ');
-                })
-                ->addColumn('action', function ($row) {
-                    $editUrl = route('admin.posts.edit', $row->id);
-                    $deleteUrl = route('admin.posts.destroy', $row->id);
-                    return datatable_actions($editUrl, $deleteUrl);
-                })
-                ->addColumn('created_at', function ($row) {
-                    return $row->created_at->format('d M Y H:i');
-                })
-                ->filter(function ($query) use ($request) {
-                    $search = $request->input('search.value');
-                    if (!empty($search)) {
-                        $query->where('title', 'like', "%{$search}%");
-                    }
-                    if ($request->has('category') && !empty($request->category)) {
-                        $query->where('category_id', $request->category);
-                    }
-                    if ($request->has('status') && !empty($request->status)) {
-                        $query->where('status', $request->status);
-                    }
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            return $this->getDatatableData($request);
         }
 
         $categories = Category::all();
-        return view('admin.posts.index', compact('categories'));
+
+        $statuses = collect([
+            (object)['id' => 'draft', 'name' => 'Draft'],
+            (object)['id' => 'published', 'name' => 'Published'],
+        ]);
+
+        $filters = FilterBuilder::make()
+            ->selectFromModel('category_id', 'All Categories', $categories)
+            ->selectFromModel('status', 'Status', $statuses)
+            ->get();
+
+        return view('admin.posts.index', compact('filters'));
+    }
+
+    protected function getDatatableData(Request $request)
+    {
+        $query = Post::with(['user', 'category'])->latest();
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('author', fn($row) => $row->user?->name ?? '-')
+            ->addColumn('category', fn($row) => $row->category?->name ?? '-')
+            ->addColumn('tags', fn($row) => $row->tags->pluck('name')->join(', '))
+            ->addColumn('created_at', fn($row) => $row->created_at->format('d M Y H:i'))
+            ->addColumn('action', function ($row) {
+                return datatable_actions(
+                    route('admin.posts.edit', $row->id),
+                    route('admin.posts.destroy', $row->id)
+                );
+            })
+            ->filter(function ($query) use ($request) {
+                DatatableFilters::applyFilters($query, $request, [
+                    'title',
+                    'body',
+                    'user.name',
+                    'category.name'
+                ]);
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     /**

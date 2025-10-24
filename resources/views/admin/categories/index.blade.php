@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('page-actions')
-    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary ">Create New Categories</a>
+    @include('admin.shared.createButton', ['route' => route('admin.categories.create')])
 @endsection
 
 @section('content')
@@ -25,38 +25,52 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse($categories as $category)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $category->name }}</td>
-                                <td>{{ $category->slug ?? 'N/A' }}</td>
-                                <td>{{ $category->description ?? 'Uncategorized' }}</td>
-                                <td>{{ $category->created_at->format('d M Y') }}</td>
-                                <td>
-                                    <a href="{{ route('admin.categories.edit', $category->id) }}"
-                                        class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST"
-                                        class="d-inline" onsubmit="return confirm('Are you sure?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center">No categories found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
                 </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="mt-3">
-                {{ $categories->links() }}
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(function() {
+            $('#posts-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('admin.posts.index') }}',
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'slug',
+                        name: 'slug'
+                    },
+                    {
+                        data: 'description',
+                        name: 'description'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
+                order: [
+                    [5, 'desc']
+                ],
+            });
+        });
+    </script>
+@endpush

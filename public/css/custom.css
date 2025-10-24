@@ -1,62 +1,66 @@
-/* === Custom Modern Dashboard Style === */
+/* === Custom Modern Dashboard Style (2025 Edition) === */
 
-/* Base typography */
+/* Base Typography & Layout */
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f5f6fa;
-    color: #333;
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+    background-color: #f6f7fb;
+    color: #2f3640;
+    font-size: 0.95rem;
 }
 
-/* Card styling */
+/* === Card Styling === */
 .card {
     border-radius: 0.75rem;
     border: none;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 
 .card-header {
-    background: linear-gradient(90deg, #f8f9fc, #eef1f9);
+    background: linear-gradient(90deg, #f9fafc, #eef2f8);
     border-bottom: 1px solid #e3e6f0;
-    border-top-left-radius: 0.75rem;
-    border-top-right-radius: 0.75rem;
+    font-weight: 600;
+    color: #374151;
 }
 
-/* Buttons */
+/* === Buttons === */
 .btn-primary {
     background: linear-gradient(135deg, #4e73df 0%, #3757c5 100%);
     border: none;
     border-radius: 0.5rem;
     font-weight: 500;
-    box-shadow: 0 2px 6px rgba(78, 115, 223, 0.4);
-    transition: all 0.2s ease;
+    box-shadow: 0 3px 8px rgba(78, 115, 223, 0.35);
+    transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 10px rgba(78, 115, 223, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(78, 115, 223, 0.45);
 }
 
 .btn-secondary {
     border-radius: 0.5rem;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    background-color: #f1f3f9;
+    color: #374151;
+    transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
+    background-color: #e2e6f3;
     transform: translateY(-1px);
 }
 
-/* Headings & Titles */
+/* === Headings === */
 h1, h2, h3, h4, h5 {
     font-weight: 600;
-    color: #2d3436;
+    color: #1e293b;
 }
 
-/* Tables */
+/* === Tables === */
 .table {
     border-radius: 0.5rem;
     overflow: hidden;
+    background: #fff;
 }
 
 .table th {
@@ -64,19 +68,22 @@ h1, h2, h3, h4, h5 {
     color: #6b7280;
     text-transform: uppercase;
     font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
 }
 
 .table td {
     vertical-align: middle;
+    color: #374151;
 }
 
-/* Sidebar polish */
+/* === Sidebar === */
 #accordionSidebar {
     background: linear-gradient(180deg, #4e73df 0%, #224abe 100%);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Scroll to top button */
+/* === Scroll-to-top === */
 .scroll-to-top {
     background-color: #4e73df;
     transition: all 0.2s;
@@ -86,12 +93,93 @@ h1, h2, h3, h4, h5 {
     background-color: #3757c5;
 }
 
+/* === Highlighted Cards === */
 .card.border-left-primary {
     border-left: 5px solid #4e73df !important;
     box-shadow: 0 3px 8px rgba(78, 115, 223, 0.15);
 }
 
-.select2-container--bootstrap-5 .select2-selection {
-    height: calc(1.5em + .75rem + 2px);
+/* === Modern Form & Select Styling === */
+.form-control,
+.form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    background-color: #fff;
+    color: #374151;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.75rem;
+    box-shadow: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.2s;
 }
 
+.form-control:focus,
+.form-select:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.15rem rgba(78, 115, 223, 0.25);
+    background-color: #fdfdff;
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23677' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.9em;
+    padding-right: 2rem;
+}
+
+/* === Datatable Filters === */
+.datatable-filters-card {
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+}
+
+.datatable-filters-card .filter-badge {
+    font-weight: 600;
+    color: #374151;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.datatable-filters-card .form-control-sm,
+.datatable-filters-card .form-select-sm {
+    min-width: 180px;
+}
+
+.datatable-filters-card .input-group-sm > .form-control,
+.datatable-filters-card .input-group-sm > .input-group-text {
+    height: 34px;
+    font-size: 0.875rem;
+}
+
+.datatable-filters-card .reset-filters {
+    border: none;
+    background: none;
+    color: #4e73df;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.4rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: color 0.2s ease;
+}
+
+.datatable-filters-card .reset-filters:hover {
+    color: #2b4bc3;
+    text-decoration: underline;
+}
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+    .datatable-filters-card .col-12 {
+        margin-bottom: 0.5rem;
+    }
+}
