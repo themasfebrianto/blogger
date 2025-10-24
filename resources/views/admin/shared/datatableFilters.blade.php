@@ -53,18 +53,35 @@
         </div>
     </div>
 </div>
-
 @once
     @push('scripts')
         <script>
             $(document).ready(function() {
-                // Apply filters on change
+                // Extend all DataTables to automatically include .datatable-filter values
+                $.fn.dataTable.ext.errMode = 'throw';
+
+                // Intercept every DataTable AJAX request and inject filters dynamically
+                $.fn.dataTable.ext.ajax = $.fn.dataTable.ext.ajax || {};
+                $(document).on('preXhr.dt', function(e, settings, data) {
+                    const tableId = settings.sTableId;
+
+                    // Find filters bound to this table
+                    $(`.datatable-filter[data-table="${tableId}"]`).each(function() {
+                        const name = $(this).attr('name');
+                        const value = $(this).val();
+                        if (value !== null && value !== '') {
+                            data[name] = value;
+                        }
+                    });
+                });
+
+                // Reload on change
                 $(document).on('change', '.datatable-filter', function() {
                     const tableId = $(this).data('table');
                     $(`#${tableId}`).DataTable().ajax.reload();
                 });
 
-                // Reset all filters
+                // Reset filters
                 $(document).on('click', '.reset-filters', function() {
                     const tableId = $(this).data('table');
                     $(`.datatable-filter[data-table="${tableId}"]`).val('');

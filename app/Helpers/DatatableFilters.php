@@ -59,16 +59,24 @@ class DatatableFilters
                 continue;
             }
 
-            // Handle relation filters (e.g. category.name)
             if (str_contains($key, '.')) {
                 [$relation, $col] = explode('.', $key, 2);
                 $query->whereHas($relation, fn($r) => $r->where($col, $value));
                 continue;
             }
 
+            if (str_ends_with($key, '_id')) {
+                $relation = str_replace('_id', '', $key);
+                if (method_exists($query->getModel(), $relation)) {
+                    $query->whereHas($relation, fn($r) => $r->where('id', $value));
+                    continue;
+                }
+            }
+
             // Fallback: simple equality
             $query->where($key, $value);
         }
+
 
         return $query;
     }

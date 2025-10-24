@@ -36,6 +36,7 @@ class PostController extends Controller
             ->selectFromModel('status', 'Status', $statuses)
             ->get();
 
+
         return view('admin.posts.index', compact('filters'));
     }
 
@@ -58,9 +59,6 @@ class PostController extends Controller
             ->filter(function ($query) use ($request) {
                 DatatableFilters::applyFilters($query, $request, [
                     'title',
-                    'body',
-                    'user.name',
-                    'category.name'
                 ]);
             })
             ->rawColumns(['action'])
