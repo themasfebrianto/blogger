@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('page-actions')
-    <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">Create New Post</a>
+    @include('admin.shared.createButton', ['route' => route('admin.posts.create')])
 @endsection
 
 @section('content')
@@ -14,51 +14,73 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered" width="100%" cellspacing="0" id="posts-table">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Title</th>
                             <th>Author</th>
                             <th>Category</th>
+                            <th>Tags</th>
                             <th>Status</th>
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse($posts as $post)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $post->title }}</td>
-                                <td>{{ $post->user->name ?? 'N/A' }}</td>
-                                <td>{{ $post->category->name ?? 'Uncategorized' }}</td>
-                                <td>{{ ucfirst($post->status ?? 'draft') }}</td>
-                                <td>{{ $post->created_at->format('d M Y') }}</td>
-                                <td>
-                                    <a href="{{ route('admin.posts.edit', $post->id) }}"
-                                        class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST"
-                                        class="d-inline" onsubmit="return confirm('Are you sure?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center">No posts found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
                 </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="mt-3">
-                {{ $posts->links() }}
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(function() {
+            $('#posts-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('admin.posts.index') }}',
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'title',
+                        name: 'title'
+                    },
+                    {
+                        data: 'author',
+                        name: 'author'
+                    },
+                    {
+                        data: 'category',
+                        name: 'category'
+                    },
+                    {
+                        data: 'tags',
+                        name: 'tags'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
+                order: [
+                    [5, 'desc']
+                ],
+            });
+        });
+    </script>
+@endpush
