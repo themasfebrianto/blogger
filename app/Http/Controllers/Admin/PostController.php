@@ -7,23 +7,37 @@ use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Helpers\DatatableFilters;
-use App\Helpers\FilterBuilder;
+use App\Helpers\FilterBuilders;
+use App\Helpers\DatatableBuilders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        // used by DataTables when fetching ajax data only
         if ($request->ajax()) {
             return $this->getDatatableData($request);
         }
 
+        // Build filters
+        $filters = $this->getDatatableFilters();
+
+        // Build DataTable config
+        $datatable = $this->datatableConfig();
+
+        return view('admin.posts.index', compact('filters', 'datatable'));
+    }
+
+    /**
+     * Build filter dropdowns or other controls
+     */
+    protected function getDatatableFilters()
+    {
         $categories = Category::all();
 
         $statuses = collect([
@@ -31,35 +45,54 @@ class PostController extends Controller
             (object)['id' => 'published', 'name' => 'Published'],
         ]);
 
-        $filters = FilterBuilder::make()
+        return FilterBuilders::make()
             ->selectFromModel('category_id', 'All Categories', $categories)
             ->selectFromModel('status', 'All Status', $statuses)
             ->get();
-
-
-        return view('admin.posts.index', compact('filters'));
     }
 
+    /**
+     * Build the DataTable column + AJAX setup
+     */
+    protected function datatableConfig()
+    {
+        return DatatableBuilders::make('posts-table')
+            ->ajax(route('admin.posts.index'))
+            ->addColumn('#', 'DT_RowIndex', false, false)
+            ->addColumn('Title', 'title')
+            ->addColumn('Author', 'author')
+            ->addColumn('Category', 'category')
+            ->addColumn('Tags', 'tags')
+            ->addColumn('Excerpt', 'excerpt')
+            ->addColumn('Slug', 'slug')
+            ->addColumn('Status', 'status')
+            ->addColumn('Created At', 'created_at')
+            ->addColumn('Actions', 'action', false, false)
+            ->order(6, 'desc')
+            ->ajaxDataParam('category', '$("#filter-category").val()')
+            ->ajaxDataParam('status', '$("#filter-status").val()')
+            ->build();
+    }
+
+    /**
+     * Handle the AJAX request for DataTables data
+     */
     protected function getDatatableData(Request $request)
     {
-        $query = Post::with(['user', 'category'])->latest();
+        $query = Post::with(['user', 'category', 'tags'])->latest();
 
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('author', fn($row) => $row->user?->name ?? '-')
             ->addColumn('category', fn($row) => $row->category?->name ?? '-')
-            ->addColumn('tags', fn($row) => $row->tags->pluck('name')->join(', '))
+            ->addColumn('tags', fn($row) => $row->tags?->pluck('name')->join(', ') ?? '-')
             ->addColumn('created_at', fn($row) => $row->created_at->format('d M Y H:i'))
-            ->addColumn('action', function ($row) {
-                return datatable_actions(
-                    route('admin.posts.edit', $row->id),
-                    route('admin.posts.destroy', $row->id)
-                );
-            })
+            ->addColumn('action', fn($row) => datatable_actions(
+                route('admin.posts.edit', $row->id),
+                route('admin.posts.destroy', $row->id)
+            ))
             ->filter(function ($query) use ($request) {
-                DatatableFilters::applyFilters($query, $request, [
-                    'title',
-                ]);
+                DatatableFilters::applyFilters($query, $request, ['title']);
             })
             ->rawColumns(['action'])
             ->make(true);

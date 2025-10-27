@@ -34,7 +34,8 @@
         "files": [
             "app/Helpers/DatatableActions.php",
             "app/Helpers/DatatableFilters.php",
-            "app/Helpers/FilterBuilder.php"
+            "app/Helpers/FilterBuilders.php",
+            "app/Helpers/DatatableBuilders.php"
         ]
     },
     "autoload-dev": {

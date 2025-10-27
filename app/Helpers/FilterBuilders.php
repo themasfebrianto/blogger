@@ -5,7 +5,7 @@ namespace App\Helpers;
 use Closure;
 use Illuminate\Support\Collection;
 
-class FilterBuilder
+class FilterBuilders
 {
     protected array $filters = [];
 
