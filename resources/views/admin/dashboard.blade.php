@@ -2,12 +2,6 @@
 
 @section('title', 'Admin Dashboard')
 
-@section('page-actions')
-    <a href="{{ route('admin.posts.create') }}" class="btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-plus fa-sm"></i> New Post
-    </a>
-@endsection
-
 @section('content')
     <!-- Welcome Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -236,7 +230,9 @@
                 </div>
             @endforeach
         </div>
-
+        <a href="{{ route('admin.posts.create') }}" class="btn btn-sm btn-primary shadow-sm mb-2">
+            <i class="fas fa-plus fa-sm"></i> New Post
+        </a>
         <!-- Recent Posts -->
         <div class="card border-0 shadow-sm rounded-lg">
             <div class="card-body p-0">
