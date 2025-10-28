@@ -13,20 +13,8 @@
         <div class="card-body">
             {{-- Filters --}}
 
-            {{-- Reusable DataTable --}}
-            @include('admin.shared.datatable', [
-                'id' => 'category-table',
-                'ajax' => route('admin.categories.index'),
-                'columns' => [
-                    ['#', 'DT_RowIndex', false, false],
-                    ['Name', 'name'],
-                    ['Slug', 'slug'],
-                    ['Description', 'description'],
-                    ['Created At', 'created_at'],
-                    ['Actions', 'action', false, false],
-                ],
-                'order' => [4, 'desc'],
-            ])
+            {{-- DataTable --}}
+            @include('admin.shared.datatable', $datatable)
         </div>
     </div>
 @endsection

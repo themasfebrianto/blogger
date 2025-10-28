@@ -28,8 +28,18 @@ class User extends Authenticatable
         ];
     }
 
-    protected function post()
+    protected function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function yaumiLogs()
+    {
+        return $this->hasMany(YaumiLog::class);
+    }
+
+    public function yaumiStreak()
+    {
+        return $this->hasOne(YaumiStreak::class);
     }
 }

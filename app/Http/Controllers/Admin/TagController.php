@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tag;
 use Yajra\DataTables\Facades\DataTables;
 use App\Helpers\DatatableFilters;
+use App\Helpers\DatatableBuilders;
 use App\Helpers\FilterBuilder;
 use Illuminate\Http\Request;
 
@@ -24,7 +25,24 @@ class TagController extends Controller
             'name' => null,
         ];
 
-        return view('admin.tags.index', compact('filters'));
+        // Build DataTable config
+        $datatable = $this->datatableConfig();
+
+
+        return view('admin.tags.index', compact('filters', 'datatable'));
+    }
+
+    protected function datatableConfig()
+    {
+        return DatatableBuilders::make('tags-table')
+            ->ajax(route('admin.tags.index'))
+            ->addColumn('#', 'DT_RowIndex', false, false)
+            ->addColumn('Name', 'name')
+            ->addColumn('Slug', 'slug')
+            ->addColumn('Created At', 'created_at')
+            ->addColumn('Actions', 'action', false, false)
+            ->order(4, 'desc')
+            ->build();
     }
 
     protected function getDatatableData(Request $request)

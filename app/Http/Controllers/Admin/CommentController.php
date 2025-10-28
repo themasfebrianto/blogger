@@ -8,7 +8,8 @@ use App\Models\Post;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use App\Helpers\DatatableFilters;
-use App\Helpers\FilterBuilder;
+use App\Helpers\DatatableBuilders;
+use App\Helpers\FilterBuilders;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -25,12 +26,29 @@ class CommentController extends Controller
         $posts = Post::select('id', 'title')->get();
         $users = User::select('id', 'name')->get();
 
-        $filters = FilterBuilder::make()
+        $filters = FilterBuilders::make()
             ->selectFromModel('post_id', 'All Posts', $posts)
             ->selectFromModel('user_id', 'All Users', $users)
             ->get();
 
-        return view('admin.comments.index', compact('filters'));
+        // Build DataTable config
+        $datatable = $this->datatableConfig();
+
+        return view('admin.comments.index', compact('filters', 'datatable'));
+    }
+
+    protected function datatableConfig()
+    {
+        return DatatableBuilders::make('comments-table')
+            ->ajax(route('admin.comments.index'))
+            ->addColumn('#', 'DT_RowIndex', false, false)
+            ->addColumn('Post', 'post')
+            ->addColumn('User', 'user')
+            ->addColumn('Comment', 'body')
+            ->addColumn('Created At', 'created_at')
+            ->addColumn('Actions', 'action', false, false)
+            ->order(4, 'desc')
+            ->build();
     }
 
 
@@ -52,8 +70,7 @@ class CommentController extends Controller
                 )
             )
             ->filter(function ($query) use ($request) {
-                if ($request->filled('post_id')) $query->where('post_id', $request->post_id);
-                if ($request->filled('user_id')) $query->where('user_id', $request->user_id);
+                DatatableFilters::applyFilters($query, $request, ['user.name', 'post.title', 'body']);
             })
             ->rawColumns(['action'])
             ->make(true);

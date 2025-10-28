@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Yajra\DataTables\Facades\DataTables;
 use App\Helpers\DatatableFilters;
+use App\Helpers\DatatableBuilders;
 use App\Helpers\FilterBuilder;
 use Illuminate\Http\Request;
 
@@ -24,7 +25,24 @@ class CategoryController extends Controller
             'name' => null,
         ];
 
-        return view('admin.categories.index', compact('filters'));
+        // Build DataTable config
+        $datatable = $this->datatableConfig();
+
+        return view('admin.categories.index', compact('filters', 'datatable'));
+    }
+
+    protected function datatableConfig()
+    {
+        return DatatableBuilders::make('category-table')
+            ->ajax(route('admin.categories.index'))
+            ->addColumn('#', 'DT_RowIndex', false, false)
+            ->addColumn('Name', 'name')
+            ->addColumn('Slug', 'slug')
+            ->addColumn('Description', 'description')
+            ->addColumn('Created At', 'created_at')
+            ->addColumn('Actions', 'action', false, false)
+            ->order(4, 'desc')
+            ->build();
     }
 
     protected function getDatatableData(Request $request)
