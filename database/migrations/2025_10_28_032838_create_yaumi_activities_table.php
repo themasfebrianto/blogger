@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('yaumi_activities', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('name');                   // Nama aktivitas
+            $table->text('description')->nullable(); // Deskripsi (opsional)
+            $table->string('icon')->nullable();      // Nama ikon (opsional)
+            $table->integer('order')->default(0);    // Urutan untuk sorting
+            $table->boolean('is_active')->default(true); // Status aktif
+            $table->timestamps();                    // created_at & updated_at
         });
     }
 

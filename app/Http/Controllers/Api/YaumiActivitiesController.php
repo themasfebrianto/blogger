@@ -1,66 +1,95 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\YaumiActivities;
-use App\Http\Requests\StoreYaumiActivitiesRequest;
-use App\Http\Requests\UpdateYaumiActivitiesRequest;
+use App\Models\YaumiActivity;
+use App\Http\Requests\Yaumi\YaumiActivities\StoreYaumiActivityRequest;
+use App\Http\Requests\Yaumi\YaumiActivities\UpdateYaumiActivityRequest;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Throwable;
 
-class YaumiActivitiesController extends Controller
+class YaumiActivityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        //
+        $query = YaumiActivity::query();
+
+        if ($request->has('active')) {
+            $query->where('is_active', (bool) $request->boolean('active'));
+        }
+
+        $activities = $query->orderBy('order')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $activities,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreYaumiActivityRequest $request): JsonResponse
     {
-        //
+        try {
+            $activity = YaumiActivity::create($request->validated());
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Activity created successfully.',
+                'data' => $activity,
+            ], 201);
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create activity.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreYaumiActivitiesRequest $request)
+    public function show(YaumiActivity $yaumiActivity): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => $yaumiActivity,
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(YaumiActivities $yaumiActivities)
+    public function update(UpdateYaumiActivityRequest $request, YaumiActivity $yaumiActivity): JsonResponse
     {
-        //
+        try {
+            $yaumiActivity->update($request->validated());
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Activity updated successfully.',
+                'data' => $yaumiActivity,
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update activity.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(YaumiActivities $yaumiActivities)
+    public function destroy(YaumiActivity $yaumiActivity): JsonResponse
     {
-        //
-    }
+        try {
+            $yaumiActivity->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateYaumiActivitiesRequest $request, YaumiActivities $yaumiActivities)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(YaumiActivities $yaumiActivities)
-    {
-        //
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Activity deleted successfully.',
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to delete activity.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
