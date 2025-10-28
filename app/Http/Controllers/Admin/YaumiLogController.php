@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 use App\Helpers\DatatableBuilders;
+use App\Helpers\DatatableFilters;
 use App\Helpers\FilterBuilders;
 use App\Models\YaumiLog;
 use App\Models\User;
@@ -40,7 +41,7 @@ class YaumiLogController extends Controller
 
     protected function datatableConfig()
     {
-        return DatatableBuilders::make('YaumiLogs-table')
+        return DatatableBuilders::make('yaumi-logs-table')
             ->ajax(route('admin.yaumi-logs.index'))
             ->addColumn('#', 'DT_RowIndex', false, false)
             ->addColumn('User', 'user_name')
