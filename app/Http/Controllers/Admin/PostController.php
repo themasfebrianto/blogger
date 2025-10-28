@@ -151,9 +151,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        if ($post->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if ($post->user_id !== Auth::id()) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $categories = Category::all();
         $tags = Tag::all();
@@ -166,9 +166,9 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        if ($post->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if ($post->user_id !== Auth::id()) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $validated = $request->validate([
             'title'       => 'required|min:3|max:255',
@@ -196,17 +196,21 @@ class PostController extends Controller
     /**
      * Remove the specified post from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post, Request $request)
     {
-        if ($post->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
         $post->tags()->detach();
         $post->delete();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Post deleted successfully!'
+            ]);
+        }
+
         return redirect()->route('admin.posts.index')->with('success', 'Post deleted successfully!');
     }
+
 
     public function show(Post $post)
     {

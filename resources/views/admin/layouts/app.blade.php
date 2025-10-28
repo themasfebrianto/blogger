@@ -84,6 +84,8 @@
     <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 
+    <!-- SweetAlert2 -->
+    <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
     @stack('scripts')
 </body>
 
