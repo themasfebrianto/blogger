@@ -8,7 +8,6 @@ use App\Http\Requests\Yaumi\YaumiLogs\UpdateYaumiLogRequest;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Throwable;
 
 class YaumiLogController extends Controller

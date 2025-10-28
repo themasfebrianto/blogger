@@ -15,6 +15,17 @@ use App\Http\Controllers\Admin\{
     YaumiLogController
 };
 
+use App\Http\Controllers\Api\{
+    CategoryController as ApiCategoryController,
+    PostController as ApiPostController,
+    TagController as ApiTagController,
+    CommentController as ApiCommentController,
+    UserController as ApiUserController,
+    YaumiActivityController as ApiYaumiActivityController,
+    YaumiLogController as ApiYaumiLogController,
+    YaumiStreakController as ApiYaumiStreakController
+};
+
 // ========================================
 // PUBLIC ROUTES
 // ========================================
@@ -58,5 +69,23 @@ Route::prefix('admin')
         Route::resource('yaumi-streaks', YaumiStreakController::class)->only(['index', 'show', 'destroy']);
         Route::resource('yaumi-logs', YaumiLogController::class)->only(['index', 'show', 'destroy']);
     });
+
+// ========================================
+// API ROUTES
+// ========================================
+Route::prefix('api')->name('api.')->group(function () {
+
+    // Users
+    Route::get('users', [ApiUserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}', [ApiUserController::class, 'show'])->name('users.show');
+
+    Route::apiResource('categories', ApiCategoryController::class);
+    Route::apiResource('posts', ApiPostController::class);
+    Route::apiResource('tags', ApiTagController::class);
+    Route::apiResource('comments', ApiCommentController::class);
+    Route::apiResource('yaumi-activities', ApiYaumiActivityController::class);
+    Route::apiResource('yaumi-logs', ApiYaumiLogController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::apiResource('yaumi-streaks', ApiYaumiStreakController::class)->only(['index', 'show']);
+});
 
 require __DIR__ . '/auth.php';
